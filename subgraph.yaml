@@ -1,0 +1,22 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Squires
+    network: arbitrum-rinkeby
+    source:
+      address: "0x0919246fbF29fC7A0c077f4966cc0f1323373a91"
+      abi: Squires
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+
+      abis:
+        - name: Squires
+          file: ./abis/Squires.json
+      eventHandlers:
+
+      file: ./src/mapping.ts
