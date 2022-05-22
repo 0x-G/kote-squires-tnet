@@ -1,22 +1,135 @@
-specVersion: 0.0.1
+specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
+  - kind: ethereum
+    name: ForestQuesting
+    network: arbitrum-rinkeby
+    source:
+      address: "0x011b9D5d2165C0b5a30397B7bD89B67f396A0cF6"
+      abi: ForestQuesting
+      startBlock: 11409748
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Squire
+        - Reward
+        - Transaction
+        - SkillUpgrade
+      abis:
+        - name: ForestQuesting
+          file: ./abis/ForestQuesting.json
+        - name: Squires
+          file: ./abis/Squires.json
+        - name: ItemData
+          file: ./abis/ItemData.json
+      eventHandlers:
+        - event: FinishedQuest(address,uint256)
+          handler: handleFinishedQuest
+        - event: StartedQuest(address,uint256,uint256)
+          handler: handleStartedQuest
+        - event: FiefReward(address,uint256,uint256,uint256)
+          handler: handleFiefReward
+        - event: SquireLevelUp(uint256,uint8)
+          handler: handleSquireLevelUp
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: CavernQuesting
+    network: arbitrum-rinkeby
+    source:
+      address: "0x182D830c07a540E382b39a1D6801090cfffC1b00"
+      abi: CavernQuesting
+      startBlock: 11409748
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Squire
+        - Reward
+        - Transaction
+        - SkillUpgrade
+      abis:
+        - name: ForestQuesting
+          file: ./abis/ForestQuesting.json
+        - name: CavernQuesting
+          file: ./abis/CavernQuesting.json
+        - name: MountainQuesting
+          file: ./abis/MountainQuesting.json
+        - name: Squires
+          file: ./abis/Squires.json
+        - name: ItemData
+          file: ./abis/ItemData.json
+      eventHandlers:
+        - event: FinishedQuest(address,uint256)
+          handler: handleFinishedQuest
+        - event: StartedQuest(address,uint256,uint256)
+          handler: handleStartedQuest
+        - event: FiefReward(address,uint256,uint256,uint256)
+          handler: handleFiefReward
+        - event: SquireLevelUp(uint256,uint8)
+          handler: handleSquireLevelUp
+        - event: ItemReward(address,uint256,uint8,uint256)
+          handler: handleItemReward
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: MountainQuesting
+    network: arbitrum-rinkeby
+    source:
+      address: "0xD56282634f122aF9446313A7a56FCecB84104608"
+      abi: MountainQuesting
+      startBlock: 11409748
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Squire
+        - Reward
+        - Transaction
+        - SkillUpgrade
+      abis:
+        - name: ForestQuesting
+          file: ./abis/ForestQuesting.json
+        - name: CavernQuesting
+          file: ./abis/CavernQuesting.json
+        - name: MountainQuesting
+          file: ./abis/MountainQuesting.json
+        - name: Squires
+          file: ./abis/Squires.json
+        - name: ItemData
+          file: ./abis/ItemData.json
+      eventHandlers:
+        - event: FinishedQuest(address,uint256)
+          handler: handleFinishedQuest
+        - event: StartedQuest(address,uint256,uint256)
+          handler: handleStartedQuest
+        - event: FiefReward(address,uint256,uint256,uint256)
+          handler: handleFiefReward
+        - event: SquireLevelUp(uint256,uint8)
+          handler: handleSquireLevelUp
+        - event: ItemReward(address,uint256,uint8,uint256)
+          handler: handleItemReward
+      file: ./src/mapping.ts
   - kind: ethereum
     name: Squires
     network: arbitrum-rinkeby
     source:
       address: "0x0919246fbF29fC7A0c077f4966cc0f1323373a91"
       abi: Squires
+      startBlock: 11409728
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-
+        - Squire
       abis:
         - name: Squires
           file: ./abis/Squires.json
       eventHandlers:
-
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
       file: ./src/mapping.ts
