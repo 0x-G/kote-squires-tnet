@@ -134,10 +134,10 @@ export function handleFiefReward(event: FiefReward): void {
 
   squire.save();
 
-  let reward = Reward.load(event.transaction.hash.toHexString());
+  let reward = Reward.load(event.transaction.hash.toHexString() + " " + event.params.squireId.toString());
 
   if(!reward)
-    reward = new Reward(event.transaction.hash.toHexString());
+    reward = new Reward(event.transaction.hash.toHexString() + " " + event.params.squireId.toString());
 
   reward.squireid = event.params.squireId;
   reward.timestamp = event.params.timestamp;
