@@ -49,9 +49,9 @@
         "type": "uint8[]"
       },
       {
-        "internalType": "uint16[]",
-        "name": "level",
-        "type": "uint16[]"
+        "internalType": "enum ItemData.ItemRarity[]",
+        "name": "rarity",
+        "type": "uint8[]"
       },
       {
         "internalType": "uint16[]",
@@ -147,25 +147,20 @@
   {
     "inputs": [
       {
-        "internalType": "enum ItemData.ItemType",
-        "name": "itemType",
-        "type": "uint8"
-      },
-      {
         "internalType": "uint256",
-        "name": "level",
+        "name": "itemId",
         "type": "uint256"
       }
     ],
-    "name": "getIdsByTypeAndLevel",
+    "name": "getBaseItemId",
     "outputs": [
       {
-        "internalType": "uint256[]",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint256[]"
+        "type": "uint256"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -201,9 +196,9 @@
             "type": "uint8"
           },
           {
-            "internalType": "uint16",
-            "name": "level",
-            "type": "uint16"
+            "internalType": "enum ItemData.ItemRarity",
+            "name": "rarity",
+            "type": "uint8"
           },
           {
             "internalType": "uint16",
@@ -222,6 +217,54 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "enum ItemData.ItemType",
+        "name": "itemType",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "itemId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "level",
+        "type": "uint256"
+      }
+    ],
+    "name": "getItemIdForLevel",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "itemId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getLevelFromItemId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {

@@ -17,6 +17,7 @@ type Squire @entity {
   lastitemname: String!
   lastitemlevel: Int!
   lastitemclass: String!
+  lastitemrarity: String!
   gotitem: Boolean!
   image: String!
   typename: String!
@@ -48,9 +49,11 @@ type ItemRewardData @entity {
   itemid: Int!
   itemname: String!
   itemlevel: Int!
+  itemrarity: String!
   itemclass: String!
   hash: String!
-  timestamp: BigInt!
+  timestamp: Int!
   squireId: BigInt!
   quest: String!
+  gotitem: Boolean!
 }

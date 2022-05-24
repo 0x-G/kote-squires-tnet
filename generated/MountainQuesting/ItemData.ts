@@ -63,7 +63,7 @@ export class ItemData__getItemByTypeAndIdResultValue0Struct extends ethereum.Tup
     return this[2].toI32();
   }
 
-  get level(): i32 {
+  get rarity(): i32 {
     return this[3].toI32();
   }
 
@@ -153,36 +153,27 @@ export class ItemData extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  getIdsByTypeAndLevel(itemType: i32, level: BigInt): Array<BigInt> {
+  getBaseItemId(itemId: BigInt): BigInt {
     let result = super.call(
-      "getIdsByTypeAndLevel",
-      "getIdsByTypeAndLevel(uint8,uint256):(uint256[])",
-      [
-        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(itemType)),
-        ethereum.Value.fromUnsignedBigInt(level)
-      ]
+      "getBaseItemId",
+      "getBaseItemId(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(itemId)]
     );
 
-    return result[0].toBigIntArray();
+    return result[0].toBigInt();
   }
 
-  try_getIdsByTypeAndLevel(
-    itemType: i32,
-    level: BigInt
-  ): ethereum.CallResult<Array<BigInt>> {
+  try_getBaseItemId(itemId: BigInt): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "getIdsByTypeAndLevel",
-      "getIdsByTypeAndLevel(uint8,uint256):(uint256[])",
-      [
-        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(itemType)),
-        ethereum.Value.fromUnsignedBigInt(level)
-      ]
+      "getBaseItemId",
+      "getBaseItemId(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(itemId)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   getItemByTypeAndId(
@@ -191,7 +182,7 @@ export class ItemData extends ethereum.SmartContract {
   ): ItemData__getItemByTypeAndIdResultValue0Struct {
     let result = super.call(
       "getItemByTypeAndId",
-      "getItemByTypeAndId(uint8,uint256):((uint8,uint16,uint8,uint16,uint16,string))",
+      "getItemByTypeAndId(uint8,uint256):((uint8,uint16,uint8,uint8,uint16,string))",
       [
         ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(itemType)),
         ethereum.Value.fromUnsignedBigInt(itemId)
@@ -209,7 +200,7 @@ export class ItemData extends ethereum.SmartContract {
   ): ethereum.CallResult<ItemData__getItemByTypeAndIdResultValue0Struct> {
     let result = super.tryCall(
       "getItemByTypeAndId",
-      "getItemByTypeAndId(uint8,uint256):((uint8,uint16,uint8,uint16,uint16,string))",
+      "getItemByTypeAndId(uint8,uint256):((uint8,uint16,uint8,uint8,uint16,string))",
       [
         ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(itemType)),
         ethereum.Value.fromUnsignedBigInt(itemId)
@@ -224,6 +215,64 @@ export class ItemData extends ethereum.SmartContract {
         value[0].toTuple()
       )
     );
+  }
+
+  getItemIdForLevel(itemType: i32, itemId: BigInt, level: BigInt): BigInt {
+    let result = super.call(
+      "getItemIdForLevel",
+      "getItemIdForLevel(uint8,uint256,uint256):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(itemType)),
+        ethereum.Value.fromUnsignedBigInt(itemId),
+        ethereum.Value.fromUnsignedBigInt(level)
+      ]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getItemIdForLevel(
+    itemType: i32,
+    itemId: BigInt,
+    level: BigInt
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getItemIdForLevel",
+      "getItemIdForLevel(uint8,uint256,uint256):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(itemType)),
+        ethereum.Value.fromUnsignedBigInt(itemId),
+        ethereum.Value.fromUnsignedBigInt(level)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getLevelFromItemId(itemId: BigInt): BigInt {
+    let result = super.call(
+      "getLevelFromItemId",
+      "getLevelFromItemId(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(itemId)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getLevelFromItemId(itemId: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getLevelFromItemId",
+      "getLevelFromItemId(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(itemId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   owner(): Address {
@@ -292,7 +341,7 @@ export class AddItemDataCall__Inputs {
     return this._call.inputValues[2].value.toI32Array();
   }
 
-  get level(): Array<i32> {
+  get rarity(): Array<i32> {
     return this._call.inputValues[3].value.toI32Array();
   }
 

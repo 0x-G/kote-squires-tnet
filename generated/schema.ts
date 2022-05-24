@@ -33,6 +33,7 @@ export class Squire extends Entity {
     this.set("lastitemname", Value.fromString(""));
     this.set("lastitemlevel", Value.fromI32(0));
     this.set("lastitemclass", Value.fromString(""));
+    this.set("lastitemrarity", Value.fromString(""));
     this.set("gotitem", Value.fromBoolean(false));
     this.set("image", Value.fromString(""));
     this.set("typename", Value.fromString(""));
@@ -215,6 +216,15 @@ export class Squire extends Entity {
 
   set lastitemclass(value: string) {
     this.set("lastitemclass", Value.fromString(value));
+  }
+
+  get lastitemrarity(): string {
+    let value = this.get("lastitemrarity");
+    return value!.toString();
+  }
+
+  set lastitemrarity(value: string) {
+    this.set("lastitemrarity", Value.fromString(value));
   }
 
   get gotitem(): boolean {
@@ -431,11 +441,13 @@ export class ItemRewardData extends Entity {
     this.set("itemid", Value.fromI32(0));
     this.set("itemname", Value.fromString(""));
     this.set("itemlevel", Value.fromI32(0));
+    this.set("itemrarity", Value.fromString(""));
     this.set("itemclass", Value.fromString(""));
     this.set("hash", Value.fromString(""));
-    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("timestamp", Value.fromI32(0));
     this.set("squireId", Value.fromBigInt(BigInt.zero()));
     this.set("quest", Value.fromString(""));
+    this.set("gotitem", Value.fromBoolean(false));
   }
 
   save(): void {
@@ -499,6 +511,15 @@ export class ItemRewardData extends Entity {
     this.set("itemlevel", Value.fromI32(value));
   }
 
+  get itemrarity(): string {
+    let value = this.get("itemrarity");
+    return value!.toString();
+  }
+
+  set itemrarity(value: string) {
+    this.set("itemrarity", Value.fromString(value));
+  }
+
   get itemclass(): string {
     let value = this.get("itemclass");
     return value!.toString();
@@ -517,13 +538,13 @@ export class ItemRewardData extends Entity {
     this.set("hash", Value.fromString(value));
   }
 
-  get timestamp(): BigInt {
+  get timestamp(): i32 {
     let value = this.get("timestamp");
-    return value!.toBigInt();
+    return value!.toI32();
   }
 
-  set timestamp(value: BigInt) {
-    this.set("timestamp", Value.fromBigInt(value));
+  set timestamp(value: i32) {
+    this.set("timestamp", Value.fromI32(value));
   }
 
   get squireId(): BigInt {
@@ -542,5 +563,14 @@ export class ItemRewardData extends Entity {
 
   set quest(value: string) {
     this.set("quest", Value.fromString(value));
+  }
+
+  get gotitem(): boolean {
+    let value = this.get("gotitem");
+    return value!.toBoolean();
+  }
+
+  set gotitem(value: boolean) {
+    this.set("gotitem", Value.fromBoolean(value));
   }
 }

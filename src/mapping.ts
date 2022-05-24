@@ -66,6 +66,7 @@ export function handleFinishedQuest(event: FinishedQuest): void {
   squire.lastitemclass = "";
   squire.lastitemlevel = 0;
   squire.lastitemname = "";
+  squire.lastitemrarity = "";
 
   squire.owner = event.params._owner.toHexString();
   squire.questing = false;
@@ -146,6 +147,35 @@ export function handleFiefReward(event: FiefReward): void {
 
   reward.save();
 
+  let rewardD = ItemRewardData.load(event.transaction.hash.toHexString() + " " + event.params.squireId.toString());
+ 
+  if(!rewardD)
+    rewardD = new ItemRewardData(event.transaction.hash.toHexString() + " " + event.params.squireId.toString());
+
+  rewardD.squireId = event.params.squireId;
+  rewardD.hash = event.transaction.hash.toHexString();
+  rewardD.itemid = 0;
+  rewardD.itemclass = "";
+  rewardD.itemlevel = 0;
+  rewardD.itemname = "";
+  rewardD.timestamp = event.params.timestamp.toI32();
+  rewardD.itemtype = "";
+  rewardD.gotitem = false;
+
+  if(Address.fromString("0x011b9d5d2165c0b5a30397b7bd89b67f396a0cf6").equals(event.address)) {
+    rewardD.quest = "forest";
+  } 
+  
+  if(Address.fromString("0x182d830c07a540e382b39a1d6801090cfffc1b00").equals(event.address)) {
+    rewardD.quest = "cavern";
+  }
+
+  if(Address.fromString("0xd56282634f122af9446313a7a56fcecb84104608").equals(event.address)) {
+    rewardD.quest = "mountain";
+  }
+
+  rewardD.save();
+
 }
 
 export function handleSquireLevelUp(event: SquireLevelUp): void {
@@ -212,13 +242,15 @@ export function handleItemReward(event: ItemReward): void {
 
   let itemDataContract = ItemData.bind(itemDataAddress);
 
-  let itemData = itemDataContract.getItemByTypeAndId(event.params.rewardType, event.params.rewardId);
+  let baseItemId = event.params.rewardId.toI32() % 100;
+
+  let itemData = itemDataContract.getItemByTypeAndId(event.params.rewardType, new BigInt(baseItemId));
 
   let itemType = itemData.itemType === 0 ? "Ring" : itemData.itemType === 1 ? "Potion" : "Trinket";
 
   let itemClass = itemData.itemClass === 0 ? "Northern" : itemData.itemClass === 1 ? "Dreadmade" : itemData.itemClass === 2 ? "Hessian" : itemData.itemClass === 3 ? "Soulforged" :  "Ancient";
 
-  let level = itemData.level;
+  let itemRarity = itemData.rarity === 0 ? "Common" : itemData.rarity === 1 ? "Uncommon" : itemData.rarity === 2 ? "Rare" : itemData.rarity === 3 ? "Epic" : "Legendary";
 
   let itemId = itemData.itemId;
 
@@ -234,9 +266,10 @@ export function handleItemReward(event: ItemReward): void {
   squire.lastitemtype = itemType;
   squire.lastitemid = itemId;
   squire.lastitemclass = itemClass;
-  squire.lastitemlevel = level;
+  squire.lastitemlevel = 1;
   squire.lastitemname = itemName;
   squire.lastitemimage = image;
+  squire.lastitemrarity = itemRarity;
 
   squire.save();
 
@@ -263,10 +296,12 @@ export function handleItemReward(event: ItemReward): void {
   rewardD.hash = event.transaction.hash.toHexString();
   rewardD.itemid = itemId;
   rewardD.itemclass = itemClass;
-  rewardD.itemlevel = level;
+  rewardD.itemlevel = 1;
+  rewardD.itemrarity = itemRarity;
   rewardD.itemname = itemName;
-  rewardD.timestamp = event.block.timestamp;
+  rewardD.timestamp = event.block.timestamp.toI32();
   rewardD.itemtype = itemType;
+  rewardD.gotitem = true;
 
   rewardD.save();
   
