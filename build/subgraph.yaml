@@ -133,3 +133,111 @@ dataSources:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
       file: ForestQuesting\ForestQuesting.wasm
+  - kind: ethereum
+    name: SquiresRings
+    network: arbitrum-rinkeby
+    source:
+      address: "0xdEDdDc3d7457Cc38DEb8Bff961c315F9758B1443"
+      abi: SquireRings
+      startBlock: 11409728
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Squire
+        - InventoryItem
+      abis:
+        - name: SquireRings
+          file: SquiresRings\abis\SquireRings.json
+        - name: ItemData
+          file: SquiresRings\abis\ItemData.json
+      eventHandlers:
+        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleRingTransfer
+      file: ForestQuesting\ForestQuesting.wasm
+  - kind: ethereum
+    name: SquirePotions
+    network: arbitrum-rinkeby
+    source:
+      address: "0x99B823115b8F9eeD186Dc1777bd1955a2F42F363"
+      abi: SquirePotions
+      startBlock: 11409728
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Squire
+        - InventoryItem
+      abis:
+        - name: SquirePotions
+          file: SquirePotions\abis\SquirePotions.json
+        - name: ItemData
+          file: SquirePotions\abis\ItemData.json
+      eventHandlers:
+        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handlePotionTransfer
+      file: ForestQuesting\ForestQuesting.wasm
+  - kind: ethereum
+    name: SquireTrinkets
+    network: arbitrum-rinkeby
+    source:
+      address: "0x3F800c899af332343fb969c99a2bc9CF36c603D2"
+      abi: SquireTrinkets
+      startBlock: 11409728
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Squire
+        - InventoryItem
+      abis:
+        - name: SquireTrinkets
+          file: SquireTrinkets\abis\SquireTrinkets.json
+        - name: ItemData
+          file: SquireTrinkets\abis\ItemData.json
+      eventHandlers:
+        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleTrinketTransfer
+      file: ForestQuesting\ForestQuesting.wasm
+  - kind: ethereum
+    name: TempleQuesting
+    network: arbitrum-rinkeby
+    source:
+      address: "0xF07D8afB572D61ADFcfC0Aa95F573CD12932Fa18"
+      abi: TempleQuesting
+      startBlock: 11409748
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Squire
+        - Reward
+        - Transaction
+        - SkillUpgrade
+      abis:
+        - name: ForestQuesting
+          file: TempleQuesting\abis\ForestQuesting.json
+        - name: CavernQuesting
+          file: TempleQuesting\abis\CavernQuesting.json
+        - name: MountainQuesting
+          file: TempleQuesting\abis\MountainQuesting.json
+        - name: TempleQuesting
+          file: TempleQuesting\abis\TempleQuesting.json
+        - name: Squires
+          file: TempleQuesting\abis\Squires.json
+        - name: ItemData
+          file: TempleQuesting\abis\ItemData.json
+      eventHandlers:
+        - event: FinishedQuest(address,uint256)
+          handler: handleFinishedQuest
+        - event: StartedQuest(address,uint256,uint256)
+          handler: handleStartedQuest
+        - event: FiefReward(address,uint256,uint256,uint256)
+          handler: handleFiefReward
+        - event: SquireLevelUp(uint256,uint8)
+          handler: handleSquireLevelUp
+      file: ForestQuesting\ForestQuesting.wasm

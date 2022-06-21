@@ -28,8 +28,12 @@ import {
   ItemReward
 } from "../generated/MountainQuesting/MountainQuesting";
 
+import {
+  TransferSingle
+} from "../generated/SquirePotions/SquirePotions";
 
-import { Squire, Reward, Transaction, SkillUpgrade, ItemRewardData } from "../generated/schema"
+
+import { Squire, Reward, Transaction, SkillUpgrade, ItemRewardData, InventoryItem } from "../generated/schema"
 
 export function handleFinishedQuest(event: FinishedQuest): void {
   let squire = Squire.load(event.params.squireId.toString());
@@ -150,31 +154,51 @@ export function handleFiefReward(event: FiefReward): void {
   let rewardD = ItemRewardData.load(event.transaction.hash.toHexString() + " " + event.params.squireId.toString());
  
   if(!rewardD)
-    rewardD = new ItemRewardData(event.transaction.hash.toHexString() + " " + event.params.squireId.toString());
+    rewardD = new ItemRewardData(event.transaction.hash.toHexString() + " " + event.params.squireId.toString())
 
-  rewardD.squireId = event.params.squireId;
-  rewardD.hash = event.transaction.hash.toHexString();
-  rewardD.itemid = 0;
-  rewardD.itemclass = "";
-  rewardD.itemlevel = 0;
-  rewardD.itemname = "";
-  rewardD.timestamp = event.params.timestamp.toI32();
-  rewardD.itemtype = "";
-  rewardD.gotitem = false;
+    rewardD.squireId = event.params.squireId;
+    rewardD.hash = event.transaction.hash.toHexString();
+    rewardD.itemid = 0;
+    rewardD.itemclass = "";
+    rewardD.itemlevel = 0;
+    rewardD.itemname = "";
+    rewardD.timestamp = event.params.timestamp.toI32();
+    rewardD.itemtype = "";
+    rewardD.gotitem = false;
 
-  if(Address.fromString("0x011b9d5d2165c0b5a30397b7bd89b67f396a0cf6").equals(event.address)) {
-    rewardD.quest = "forest";
-  } 
-  
-  if(Address.fromString("0x182d830c07a540e382b39a1d6801090cfffc1b00").equals(event.address)) {
-    rewardD.quest = "cavern";
-  }
+    if(Address.fromString("0x011b9d5d2165c0b5a30397b7bd89b67f396a0cf6").equals(event.address)) {
+      rewardD.quest = "forest";
+    } 
+    
+    if(Address.fromString("0x182d830c07a540e382b39a1d6801090cfffc1b00").equals(event.address)) {
+      rewardD.quest = "cavern";
+    }
 
-  if(Address.fromString("0xd56282634f122af9446313a7a56fcecb84104608").equals(event.address)) {
-    rewardD.quest = "mountain";
-  }
+    if(Address.fromString("0xd56282634f122af9446313a7a56fcecb84104608").equals(event.address)) {
+      rewardD.quest = "mountain";
+    }
 
-  rewardD.save();
+    rewardD.save();;
+
+    let levelUp = SkillUpgrade.load(event.transaction.hash.toHexString() + " " + event.params.squireId.toString());
+
+  if(!levelUp)
+    levelUp = new SkillUpgrade(event.transaction.hash.toHexString() + " " + event.params.squireId.toString())
+
+  levelUp.squireid = event.params.squireId;
+  levelUp.hash = event.transaction.hash.toHexString();
+
+  levelUp.upgraded = "None";
+  levelUp.newvalue = 0;
+
+  levelUp.save();
+
+    let tx = Transaction.load(event.transaction.hash.toHexString());
+
+  if(!tx)
+    tx = new Transaction(event.transaction.hash.toHexString());
+
+    tx.save();
 
 }
 
@@ -198,6 +222,7 @@ export function handleSquireLevelUp(event: SquireLevelUp): void {
     levelUp = new SkillUpgrade(event.transaction.hash.toHexString())
 
   levelUp.squireid = tokenId;
+  levelUp.hash = event.transaction.hash.toHexString();
 
   if(event.params.skillType == 0) {
     upgradeType = "Faith";
@@ -233,6 +258,13 @@ export function handleSquireLevelUp(event: SquireLevelUp): void {
   squire.save();
   levelUp.save();
 
+  let tx = Transaction.load(event.transaction.hash.toHexString());
+
+  if(!tx)
+    tx = new Transaction(event.transaction.hash.toHexString());
+
+    tx.save();
+
 }
 
 export function handleItemReward(event: ItemReward): void {
@@ -244,7 +276,7 @@ export function handleItemReward(event: ItemReward): void {
 
   let baseItemId = event.params.rewardId.toI32() % 100;
 
-  let itemData = itemDataContract.getItemByTypeAndId(event.params.rewardType, new BigInt(baseItemId));
+  let itemData = itemDataContract.getItemByTypeAndId(event.params.rewardType, BigInt.fromI32(baseItemId));
 
   let itemType = itemData.itemType === 0 ? "Ring" : itemData.itemType === 1 ? "Potion" : "Trinket";
 
@@ -304,6 +336,13 @@ export function handleItemReward(event: ItemReward): void {
   rewardD.gotitem = true;
 
   rewardD.save();
+
+  let tx = Transaction.load(event.transaction.hash.toHexString());
+
+  if(!tx)
+    tx = new Transaction(event.transaction.hash.toHexString());
+
+    tx.save();
   
 }
 
@@ -421,4 +460,216 @@ export function handleTransfer(event: Transfer): void {
 }
 
   squire.save();
+
+  let tx = Transaction.load(event.transaction.hash.toHexString());
+
+  if(!tx)
+    tx = new Transaction(event.transaction.hash.toHexString());
+
+    tx.save();
+}
+
+
+export function handlePotionTransfer(event: TransferSingle): void {
+
+  if(Address.fromString("0x0000000000000000000000000000000000000000").equals(event.params.to))
+    return;
+
+  let itemDataAddress = Address.fromString("0x949D81Ebec2856e451b54a6203AF3F74C1045E22")
+
+  let itemDataContract = ItemData.bind(itemDataAddress);
+
+  let baseItemId = event.params.id.toI32() % 100;
+
+  let level = 1;
+
+  let item32 = event.params.id.toI32();
+
+  if(item32 >= 100)
+    level = (item32 - (item32 % 100)) / 100;
+
+  let itemData = itemDataContract.getItemByTypeAndId(1, BigInt.fromI32(baseItemId));
+
+  let itemClass = itemData.itemClass === 0 ? "Northern" : itemData.itemClass === 1 ? "Dreadmade" : itemData.itemClass === 2 ? "Hessian" : itemData.itemClass === 3 ? "Soulforged" :  "Ancient";
+
+  let itemRarity = itemData.rarity === 0 ? "Common" : itemData.rarity === 1 ? "Uncommon" : itemData.rarity === 2 ? "Rare" : itemData.rarity === 3 ? "Epic" : "Legendary";
+
+  let itemName = itemData.name;
+
+  let image = "https://knightsoftheether.com/squires/images/potions/" + itemName.replaceAll(" ", "%20") + ".png";
+
+  let inventoryItem = InventoryItem.load(event.params.to.toHexString() + " " + event.params.id.toString() + " " + "Potion");
+
+  if(!inventoryItem) {
+    inventoryItem = new InventoryItem(event.params.to.toHexString() + " " + event.params.id.toString() + " " + "Potion");
+    inventoryItem.itemid = event.params.id;
+    inventoryItem.itemamount = event.params.value;
+    inventoryItem.owner = event.params.to.toHexString();
+
+    inventoryItem.itemtype = "Potion";
+    inventoryItem.itemclass = itemClass;
+    inventoryItem.itemimage = image;
+    inventoryItem.itemrarity = itemRarity;
+    inventoryItem.itemlevel = level;
+  } else {
+    inventoryItem.itemamount = inventoryItem.itemamount.plus(event.params.value);
+  }
+
+  inventoryItem.save();
+
+  if(Address.fromString("0x0000000000000000000000000000000000000000").equals(event.params.from))
+    return;
+
+
+  let otherInventory = InventoryItem.load(event.params.to.toHexString() + " " + event.params.id.toString() + " " + "Potion");
+
+    if(otherInventory) {
+      otherInventory.itemamount.minus(event.params.value);
+
+      otherInventory.save();
+    }
+
+    let tx = Transaction.load(event.transaction.hash.toHexString());
+
+  if(!tx)
+    tx = new Transaction(event.transaction.hash.toHexString());
+
+    tx.save();
+}
+
+
+
+export function handleRingTransfer(event: TransferSingle): void {
+
+  if(Address.fromString("0x0000000000000000000000000000000000000000").equals(event.params.to))
+    return;
+
+  let itemDataAddress = Address.fromString("0x949D81Ebec2856e451b54a6203AF3F74C1045E22")
+
+  let itemDataContract = ItemData.bind(itemDataAddress);
+
+  let baseItemId = event.params.id.toI32() % 100;
+
+  let level = 1;
+
+  let item32 = event.params.id.toI32();
+
+  if(item32 >= 100)
+    level = (item32 - (item32 % 100)) / 100;
+
+  let itemData = itemDataContract.getItemByTypeAndId(0, BigInt.fromI32(baseItemId));
+
+  let itemClass = itemData.itemClass === 0 ? "Northern" : itemData.itemClass === 1 ? "Dreadmade" : itemData.itemClass === 2 ? "Hessian" : itemData.itemClass === 3 ? "Soulforged" :  "Ancient";
+
+  let itemRarity = itemData.rarity === 0 ? "Common" : itemData.rarity === 1 ? "Uncommon" : itemData.rarity === 2 ? "Rare" : itemData.rarity === 3 ? "Epic" : "Legendary";
+
+  let itemName = itemData.name;
+
+  let image = "https://knightsoftheether.com/squires/images/rings/" + itemName.replaceAll(" ", "%20") + ".png";
+
+  let inventoryItem = InventoryItem.load(event.params.to.toHexString() + " " + event.params.id.toString() + " " + "Ring");
+
+  if(!inventoryItem) {
+    inventoryItem = new InventoryItem(event.params.to.toHexString() + " " + event.params.id.toString() + " " + "Ring");
+    inventoryItem.itemid = event.params.id;
+    inventoryItem.itemamount = event.params.value;
+    inventoryItem.owner = event.params.to.toHexString();
+
+    inventoryItem.itemtype = "Ring";
+    inventoryItem.itemclass = itemClass;
+    inventoryItem.itemimage = image;
+    inventoryItem.itemrarity = itemRarity;
+    inventoryItem.itemlevel = level;
+  } else {
+    inventoryItem.itemamount = inventoryItem.itemamount.plus(event.params.value);
+  }
+
+  inventoryItem.save();
+
+  if(Address.fromString("0x0000000000000000000000000000000000000000").equals(event.params.from))
+    return;
+
+
+  let otherInventory = InventoryItem.load(event.params.to.toHexString() + " " + event.params.id.toString() + " " + "Ring");
+
+    if(otherInventory) {
+      otherInventory.itemamount.minus(event.params.value);
+
+      otherInventory.save();
+    }
+    
+
+    let tx = Transaction.load(event.transaction.hash.toHexString());
+
+  if(!tx)
+    tx = new Transaction(event.transaction.hash.toHexString());
+
+    tx.save();
+}
+
+export function handleTrinketTransfer(event: TransferSingle): void {
+
+  if(Address.fromString("0x0000000000000000000000000000000000000000").equals(event.params.to))
+    return;
+
+  let itemDataAddress = Address.fromString("0x949D81Ebec2856e451b54a6203AF3F74C1045E22")
+
+  let itemDataContract = ItemData.bind(itemDataAddress);
+
+  let baseItemId = event.params.id.toI32() % 100;
+
+  let level = 1;
+
+  let item32 = event.params.id.toI32();
+
+  if(item32 >= 100)
+    level = (item32 - (item32 % 100)) / 100;
+
+  let itemData = itemDataContract.getItemByTypeAndId(2, BigInt.fromI32(baseItemId));
+
+  let itemClass = itemData.itemClass === 0 ? "Northern" : itemData.itemClass === 1 ? "Dreadmade" : itemData.itemClass === 2 ? "Hessian" : itemData.itemClass === 3 ? "Soulforged" :  "Ancient";
+
+  let itemRarity = itemData.rarity === 0 ? "Common" : itemData.rarity === 1 ? "Uncommon" : itemData.rarity === 2 ? "Rare" : itemData.rarity === 3 ? "Epic" : "Legendary";
+
+  let itemName = itemData.name;
+
+  let image = "https://knightsoftheether.com/squires/images/rings/" + itemName.replaceAll(" ", "%20") + ".png";
+
+  let inventoryItem = InventoryItem.load(event.params.to.toHexString() + " " + event.params.id.toString() + " " + "Trinket");
+
+  if(!inventoryItem) {
+    inventoryItem = new InventoryItem(event.params.to.toHexString() + " " + event.params.id.toString() + " " + "Trinket");
+    inventoryItem.itemid = event.params.id;
+    inventoryItem.itemamount = event.params.value;
+    inventoryItem.owner = event.params.to.toHexString();
+
+    inventoryItem.itemtype = "Trinket";
+    inventoryItem.itemclass = itemClass;
+    inventoryItem.itemimage = image;
+    inventoryItem.itemrarity = itemRarity;
+    inventoryItem.itemlevel = level;
+  } else {
+    inventoryItem.itemamount = inventoryItem.itemamount.plus(event.params.value);
+  }
+
+  inventoryItem.save();
+
+  if(Address.fromString("0x0000000000000000000000000000000000000000").equals(event.params.from))
+    return;
+
+
+  let otherInventory = InventoryItem.load(event.params.to.toHexString() + " " + event.params.id.toString() + " " + "Trinket");
+
+    if(otherInventory) {
+      otherInventory.itemamount.minus(event.params.value);
+
+      otherInventory.save();
+    }
+
+    let tx = Transaction.load(event.transaction.hash.toHexString());
+
+  if(!tx)
+    tx = new Transaction(event.transaction.hash.toHexString());
+
+    tx.save();
 }

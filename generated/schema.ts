@@ -377,6 +377,7 @@ export class SkillUpgrade extends Entity {
     this.set("upgraded", Value.fromString(""));
     this.set("newvalue", Value.fromI32(0));
     this.set("squireid", Value.fromBigInt(BigInt.zero()));
+    this.set("hash", Value.fromString(""));
   }
 
   save(): void {
@@ -429,6 +430,15 @@ export class SkillUpgrade extends Entity {
 
   set squireid(value: BigInt) {
     this.set("squireid", Value.fromBigInt(value));
+  }
+
+  get hash(): string {
+    let value = this.get("hash");
+    return value!.toString();
+  }
+
+  set hash(value: string) {
+    this.set("hash", Value.fromString(value));
   }
 }
 
@@ -572,5 +582,118 @@ export class ItemRewardData extends Entity {
 
   set gotitem(value: boolean) {
     this.set("gotitem", Value.fromBoolean(value));
+  }
+}
+
+export class InventoryItem extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("itemid", Value.fromBigInt(BigInt.zero()));
+    this.set("itemamount", Value.fromBigInt(BigInt.zero()));
+    this.set("owner", Value.fromString(""));
+    this.set("itemtype", Value.fromString(""));
+    this.set("itemclass", Value.fromString(""));
+    this.set("itemrarity", Value.fromString(""));
+    this.set("itemimage", Value.fromString(""));
+    this.set("itemlevel", Value.fromI32(0));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save InventoryItem entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type InventoryItem must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("InventoryItem", id.toString(), this);
+    }
+  }
+
+  static load(id: string): InventoryItem | null {
+    return changetype<InventoryItem | null>(store.get("InventoryItem", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get itemid(): BigInt {
+    let value = this.get("itemid");
+    return value!.toBigInt();
+  }
+
+  set itemid(value: BigInt) {
+    this.set("itemid", Value.fromBigInt(value));
+  }
+
+  get itemamount(): BigInt {
+    let value = this.get("itemamount");
+    return value!.toBigInt();
+  }
+
+  set itemamount(value: BigInt) {
+    this.set("itemamount", Value.fromBigInt(value));
+  }
+
+  get owner(): string {
+    let value = this.get("owner");
+    return value!.toString();
+  }
+
+  set owner(value: string) {
+    this.set("owner", Value.fromString(value));
+  }
+
+  get itemtype(): string {
+    let value = this.get("itemtype");
+    return value!.toString();
+  }
+
+  set itemtype(value: string) {
+    this.set("itemtype", Value.fromString(value));
+  }
+
+  get itemclass(): string {
+    let value = this.get("itemclass");
+    return value!.toString();
+  }
+
+  set itemclass(value: string) {
+    this.set("itemclass", Value.fromString(value));
+  }
+
+  get itemrarity(): string {
+    let value = this.get("itemrarity");
+    return value!.toString();
+  }
+
+  set itemrarity(value: string) {
+    this.set("itemrarity", Value.fromString(value));
+  }
+
+  get itemimage(): string {
+    let value = this.get("itemimage");
+    return value!.toString();
+  }
+
+  set itemimage(value: string) {
+    this.set("itemimage", Value.fromString(value));
+  }
+
+  get itemlevel(): i32 {
+    let value = this.get("itemlevel");
+    return value!.toI32();
+  }
+
+  set itemlevel(value: i32) {
+    this.set("itemlevel", Value.fromI32(value));
   }
 }
