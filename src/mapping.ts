@@ -179,6 +179,9 @@ export function handleFiefReward(event: FiefReward): void {
       rewardD.quest = "mountain";
     }
 
+    if(Address.fromString("0xf07d8afb572d61adfcfc0aa95f573cd12932fa18").equals(event.address)) {
+      rewardD.quest = "temple";
+    }
     rewardD.save();;
 
     let levelUp = SkillUpgrade.load(event.transaction.hash.toHexString() + " " + event.params.squireId.toString());
