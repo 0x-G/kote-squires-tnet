@@ -164,6 +164,7 @@ export function handleFiefReward(event: FiefReward): void {
     rewardD.itemname = "";
     rewardD.timestamp = event.params.timestamp.toI32();
     rewardD.itemtype = "";
+    rewardD.image = "";
     rewardD.gotitem = false;
 
     if(Address.fromString("0x011b9d5d2165c0b5a30397b7bd89b67f396a0cf6").equals(event.address)) {
@@ -216,10 +217,10 @@ export function handleSquireLevelUp(event: SquireLevelUp): void {
 
   let tokenId = event.params.squireId;
 
-  let levelUp = SkillUpgrade.load(event.transaction.hash.toHexString());
+  let levelUp = SkillUpgrade.load(event.transaction.hash.toHexString() + " " + event.params.squireId.toString());
 
   if(!levelUp)
-    levelUp = new SkillUpgrade(event.transaction.hash.toHexString())
+    levelUp = new SkillUpgrade(event.transaction.hash.toHexString() + " " + event.params.squireId.toString())
 
   levelUp.squireid = tokenId;
   levelUp.hash = event.transaction.hash.toHexString();
@@ -325,6 +326,8 @@ export function handleItemReward(event: ItemReward): void {
     rewardD.quest = "mountain";
   }
 
+  
+
   rewardD.hash = event.transaction.hash.toHexString();
   rewardD.itemid = itemId;
   rewardD.itemclass = itemClass;
@@ -333,6 +336,7 @@ export function handleItemReward(event: ItemReward): void {
   rewardD.itemname = itemName;
   rewardD.timestamp = event.block.timestamp.toI32();
   rewardD.itemtype = itemType;
+  rewardD.image = image;
   rewardD.gotitem = true;
 
   rewardD.save();

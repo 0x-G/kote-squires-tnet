@@ -57,6 +57,7 @@ type ItemRewardData @entity {
   squireId: BigInt!
   quest: String!
   gotitem: Boolean!
+  image: String!
 }
 
 type InventoryItem @entity {

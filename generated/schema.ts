@@ -458,6 +458,7 @@ export class ItemRewardData extends Entity {
     this.set("squireId", Value.fromBigInt(BigInt.zero()));
     this.set("quest", Value.fromString(""));
     this.set("gotitem", Value.fromBoolean(false));
+    this.set("image", Value.fromString(""));
   }
 
   save(): void {
@@ -582,6 +583,15 @@ export class ItemRewardData extends Entity {
 
   set gotitem(value: boolean) {
     this.set("gotitem", Value.fromBoolean(value));
+  }
+
+  get image(): string {
+    let value = this.get("image");
+    return value!.toString();
+  }
+
+  set image(value: string) {
+    this.set("image", Value.fromString(value));
   }
 }
 
