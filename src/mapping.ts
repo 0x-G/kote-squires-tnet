@@ -186,16 +186,22 @@ export function handleFiefReward(event: FiefReward): void {
 
     let levelUp = SkillUpgrade.load(event.transaction.hash.toHexString() + " " + event.params.squireId.toString());
 
-  if(!levelUp)
+
+  if(!levelUp) {
     levelUp = new SkillUpgrade(event.transaction.hash.toHexString() + " " + event.params.squireId.toString())
 
-  levelUp.squireid = event.params.squireId;
-  levelUp.hash = event.transaction.hash.toHexString();
+    levelUp.squireid = event.params.squireId;
+    levelUp.hash = event.transaction.hash.toHexString();
 
-  levelUp.upgraded = "None";
-  levelUp.newvalue = 0;
+    levelUp.upgraded = "None";
+    levelUp.newvalue = 0;
+    levelUp.double = false;
+    levelUp.doublenewvalue = 0;
+    levelUp.doubleupgraded = "None";
 
-  levelUp.save();
+    levelUp.save();
+  }
+    
 
     let tx = Transaction.load(event.transaction.hash.toHexString());
 
@@ -222,41 +228,79 @@ export function handleSquireLevelUp(event: SquireLevelUp): void {
 
   let levelUp = SkillUpgrade.load(event.transaction.hash.toHexString() + " " + event.params.squireId.toString());
 
+  let double = false;
+
+  if(levelUp)
+    double = true;
+
   if(!levelUp)
     levelUp = new SkillUpgrade(event.transaction.hash.toHexString() + " " + event.params.squireId.toString())
 
   levelUp.squireid = tokenId;
   levelUp.hash = event.transaction.hash.toHexString();
 
-  if(event.params.skillType == 0) {
-    upgradeType = "Faith";
-    let faith = contract.faithByTokenId(tokenId);
-    levelUp.upgraded = upgradeType;
-    levelUp.newvalue = faith.toI32();
+  if(!double) {
+    if(event.params.skillType == 0) {
+      upgradeType = "Faith";
+      let faith = contract.faithByTokenId(tokenId);
+      levelUp.upgraded = upgradeType;
+      levelUp.newvalue = faith.toI32();
+    }
+
+    if(event.params.skillType == 1) {
+      upgradeType = "Luck";
+      let luck = contract.luckByTokenId(tokenId);
+      levelUp.upgraded = upgradeType;
+      levelUp.newvalue = luck.toI32();
+
+    }
+
+    if(event.params.skillType == 2) {
+      upgradeType = "Strength";
+      let strength = contract.strengthByTokenId(tokenId);
+      levelUp.upgraded = upgradeType;
+      levelUp.newvalue = strength.toI32();
+    }
+
+    if(event.params.skillType == 3) {
+      upgradeType = "Wisdom";
+      let wisdom = contract.wisdomByTokenId(tokenId);
+      levelUp.upgraded = upgradeType;
+      levelUp.newvalue = wisdom.toI32();
+    }
+  } else {
+    levelUp.double = true;
+    if(event.params.skillType == 0) {
+      upgradeType = "Faith";
+      let faith = contract.faithByTokenId(tokenId);
+      levelUp.doubleupgraded = upgradeType;
+      levelUp.doublenewvalue = faith.toI32();
+    }
+
+    if(event.params.skillType == 1) {
+      upgradeType = "Luck";
+      let luck = contract.luckByTokenId(tokenId);
+      levelUp.doubleupgraded = upgradeType;
+      levelUp.doublenewvalue = luck.toI32();
+
+    }
+
+    if(event.params.skillType == 2) {
+      upgradeType = "Strength";
+      let strength = contract.strengthByTokenId(tokenId);
+      levelUp.doubleupgraded = upgradeType;
+      levelUp.doublenewvalue = strength.toI32();
+    }
+
+    if(event.params.skillType == 3) {
+      upgradeType = "Wisdom";
+      let wisdom = contract.wisdomByTokenId(tokenId);
+      levelUp.doubleupgraded = upgradeType;
+      levelUp.doublenewvalue = wisdom.toI32();
+    }
   }
 
-  if(event.params.skillType == 1) {
-    upgradeType = "Luck";
-    let luck = contract.luckByTokenId(tokenId);
-    levelUp.upgraded = upgradeType;
-    levelUp.newvalue = luck.toI32();
-
-  }
-
-  if(event.params.skillType == 2) {
-    upgradeType = "Strength";
-    let strength = contract.strengthByTokenId(tokenId);
-    levelUp.upgraded = upgradeType;
-    levelUp.newvalue = strength.toI32();
-  }
-
-  if(event.params.skillType == 3) {
-    upgradeType = "Wisdom";
-    let wisdom = contract.wisdomByTokenId(tokenId);
-    levelUp.upgraded = upgradeType;
-    levelUp.newvalue = wisdom.toI32();
-  }
-
+  
   squire.lastupgrade = upgradeType;
 
   squire.save();
@@ -329,6 +373,10 @@ export function handleItemReward(event: ItemReward): void {
     rewardD.quest = "mountain";
   }
 
+  if(Address.fromString("0xf07d8afb572d61adfcfc0aa95f573cd12932fa18").equals(event.address)) {
+    rewardD.quest = "temple";
+  }
+
   
 
   rewardD.hash = event.transaction.hash.toHexString();
@@ -386,7 +434,7 @@ export function handleTransfer(event: Transfer): void {
     squire.questtype = "forest";
     q = true;
   } 
-  
+
   if(Address.fromString("0x182d830c07a540e382b39a1d6801090cfffc1b00").equals(event.params.to)) {
     squire.questing = true;
     squire.owner = event.params.from.toHexString();
@@ -400,6 +448,15 @@ export function handleTransfer(event: Transfer): void {
     squire.questtype = "mountain";
     q = true;
   }
+
+  if(Address.fromString("0xf07d8afb572d61adfcfc0aa95f573cd12932fa18").equals(event.params.to)) {
+    squire.questing = true;
+    squire.owner = event.params.from.toHexString();
+    squire.questtype = "temple";
+    q = true;
+  }
+
+  
 
   if(!q) {
     squire.questing = false;

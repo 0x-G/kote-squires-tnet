@@ -42,6 +42,9 @@ type SkillUpgrade @entity {
   newvalue: Int!
   squireid: BigInt!
   hash: String!
+  double: Boolean!
+  doubleupgraded: String!
+  doublenewvalue: Int!
 }
 
 type ItemRewardData @entity {

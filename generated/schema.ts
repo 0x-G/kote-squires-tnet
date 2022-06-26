@@ -378,6 +378,9 @@ export class SkillUpgrade extends Entity {
     this.set("newvalue", Value.fromI32(0));
     this.set("squireid", Value.fromBigInt(BigInt.zero()));
     this.set("hash", Value.fromString(""));
+    this.set("double", Value.fromBoolean(false));
+    this.set("doubleupgraded", Value.fromString(""));
+    this.set("doublenewvalue", Value.fromI32(0));
   }
 
   save(): void {
@@ -439,6 +442,33 @@ export class SkillUpgrade extends Entity {
 
   set hash(value: string) {
     this.set("hash", Value.fromString(value));
+  }
+
+  get double(): boolean {
+    let value = this.get("double");
+    return value!.toBoolean();
+  }
+
+  set double(value: boolean) {
+    this.set("double", Value.fromBoolean(value));
+  }
+
+  get doubleupgraded(): string {
+    let value = this.get("doubleupgraded");
+    return value!.toString();
+  }
+
+  set doubleupgraded(value: string) {
+    this.set("doubleupgraded", Value.fromString(value));
+  }
+
+  get doublenewvalue(): i32 {
+    let value = this.get("doublenewvalue");
+    return value!.toI32();
+  }
+
+  set doublenewvalue(value: i32) {
+    this.set("doublenewvalue", Value.fromI32(value));
   }
 }
 
