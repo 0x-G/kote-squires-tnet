@@ -184,23 +184,23 @@ export function handleFiefReward(event: FiefReward): void {
     }
     rewardD.save();;
 
-    let levelUp = SkillUpgrade.load(event.transaction.hash.toHexString() + " " + event.params.squireId.toString());
+  // let levelUp = SkillUpgrade.load(event.transaction.hash.toHexString() + " " + event.params.squireId.toString());
 
 
-  if(!levelUp) {
-    levelUp = new SkillUpgrade(event.transaction.hash.toHexString() + " " + event.params.squireId.toString())
+  // if(!levelUp) {
+  //   levelUp = new SkillUpgrade(event.transaction.hash.toHexString() + " " + event.params.squireId.toString())
 
-    levelUp.squireid = event.params.squireId;
-    levelUp.hash = event.transaction.hash.toHexString();
+  //   levelUp.squireid = event.params.squireId;
+  //   levelUp.hash = event.transaction.hash.toHexString();
 
-    levelUp.upgraded = "None";
-    levelUp.newvalue = 0;
-    levelUp.double = false;
-    levelUp.doublenewvalue = 0;
-    levelUp.doubleupgraded = "None";
+  //   levelUp.upgraded = "None";
+  //   levelUp.newvalue = 0;
+  //   levelUp.double = false;
+  //   levelUp.doublenewvalue = 0;
+  //   levelUp.doubleupgraded = "None";
 
-    levelUp.save();
-  }
+  //   levelUp.save();
+  // }
     
 
     let tx = Transaction.load(event.transaction.hash.toHexString());
